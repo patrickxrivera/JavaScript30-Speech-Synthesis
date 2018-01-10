@@ -13,6 +13,7 @@ function populateVoices() {
 
 function renderVoicesHTML(voices) {
   let voicesHTML = voices
+    .filter(voice => voice.lang.includes('en'))
     .map(voice => {
       return `<option value="${voice.name}">${voice.name} - ${voice.lang}</option>`;
     }).join('');
@@ -31,5 +32,22 @@ function toggleVoices(startOver = true) {
   }
 }
 
+function setOption() {
+  let targetProperty = this.name;
+  msg[targetProperty] = this.value;
+  toggleVoices();
+}
+
+function playSound() {
+  speechSynthesis.speak(msg);
+}
+
+function stopSound() {
+  speechSynthesis.cancel();
+}
+
 speechSynthesis.addEventListener('voiceschanged', populateVoices);
 voicesDropdown.addEventListener('change', setVoice);
+options.forEach(option => option.addEventListener('change', setOption))
+speakButton.addEventListener('click', toggleVoices);
+stopButton.addEventListener('click', () => toggle(false));
