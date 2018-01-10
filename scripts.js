@@ -7,14 +7,29 @@ const stopButton = document.querySelector('#stop');
 msg.text = document.querySelector('[name="text"]').value;
 
 function populateVoices() {
-  voices = getVoices(this);
-  console.log(voices);
+  voices = this.getVoices();
+  renderVoicesHTML(voices);
 }
 
-function getVoices(speechObj) {
-  let voicesArray = speechObj.getVoices();
-  let voices = voicesArray.map(voice => voice.name);
-  return voices;
+function renderVoicesHTML(voices) {
+  let voicesHTML = voices
+    .map(voice => {
+      return `<option value="${voice.name}">${voice.name} - ${voice.lang}</option>`;
+    }).join('');
+  voicesDropdown.innerHTML = voicesHTML;
+}
+
+function setVoice() {
+  msg.voice = voices.find(voice => voice.name === this.value);
+  toggleVoices();
+}
+
+function toggleVoices(startOver = true) {
+  speechSynthesis.cancel();
+  if (startOver) {
+    speechSynthesis.speak(msg);
+  }
 }
 
 speechSynthesis.addEventListener('voiceschanged', populateVoices);
+voicesDropdown.addEventListener('change', setVoice);
